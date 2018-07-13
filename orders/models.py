@@ -10,9 +10,12 @@ User = get_user_model()
 class Table(models.Model):
     title = models.CharField(unique=True, max_length=150)
     active = models.BooleanField(default=True)
-    is_using = models.BooleanField(default=True)
+    is_using = models.BooleanField(default=False)
     user_using = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
-    ordering = models.IntegerField(default=0)
+    ordering = models.IntegerField(default=0, help_text='bigger the better')
+
+    class Meta:
+        ordering = ['-ordering',]
 
 
     def __str__(self):
