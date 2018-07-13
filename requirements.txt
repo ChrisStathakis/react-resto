@@ -1,0 +1,11 @@
+django == 2.0
+django-cors-headers
+djangorestframework
+djangorestframework-jwt
+django-cors-headers
+gunicorn==19.7.1
+django-rest-auth
+django-filter
+django-webpack-loader
+whitenoise==3.3.0
+django-allauth
