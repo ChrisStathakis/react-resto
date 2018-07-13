@@ -21,8 +21,8 @@ class Table(models.Model):
 
 class Order(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
-    user_created = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='order_created')
-    user_edited = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='order_edited')
+    user_created = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='order_created')
+    user_edited = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='order_edited')
     active = models.BooleanField(default=True)
     is_paid = models.BooleanField(default=False)
 
@@ -33,7 +33,7 @@ class Order(models.Model):
     paid_value = models.DecimalField(max_digits=20, decimal_places=2, default=0)
     
 
-    def __str__(self):
+    def __str__(self): 
         return f'Τραπέζι {self.table_related.title} - Order {self.id}'
 
     def save(self, *args, **kwargs):
@@ -46,8 +46,8 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     timestamp     = models.DateTimeField(auto_now_add=True)
-    user_created  = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='order_created')
-    user_edited   = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='order_edited')
+    user_created  = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='order_item_created')
+    user_edited   = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='order_item_edited')
     
     product_related = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
     order_related = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items')
