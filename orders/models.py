@@ -21,6 +21,11 @@ class Table(models.Model):
     def __str__(self):
         return self.title
 
+    def last_active_table(self):    
+        qs_exists = self.orders.filter(active=True, table_related=self)
+        if qs_exists.exists():
+            return qs_exists.last().id 
+        return None
 
 class Order(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -29,7 +34,7 @@ class Order(models.Model):
     active = models.BooleanField(default=True)
     is_paid = models.BooleanField(default=False)
 
-    table_related = models.ForeignKey(Table, on_delete=models.SET_NULL, null=True)  
+    table_related = models.ForeignKey(Table, on_delete=models.SET_NULL, null=True, related_name='orders')  
     title = models.CharField(blank=True, max_length=200)
 
     value = models.DecimalField(max_digits=20, decimal_places=2, default=0)
@@ -53,6 +58,12 @@ class Order(models.Model):
 
     def tag_is_paid(self):
         return 'Is Paid' if self.is_paid else 'No Paid'
+
+    def last_active_table(self):
+        qs_exists = Order.objects.filter(active=True, table_related=self.table_related)
+        if qs_exists.exists():
+            return qs_exists.last().id 
+        return None
 
     
 

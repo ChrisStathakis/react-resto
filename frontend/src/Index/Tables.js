@@ -9,7 +9,7 @@ class Tables extends React.Component{
 
     render() {
         const {tables} = this.props;
-
+        console.log('props', tables)
         return (
             <div className='ui grid container'>
                 <div className='row'>
@@ -38,14 +38,18 @@ class Tables extends React.Component{
                                                 }}>
                                                 <div className="ui green  button">New order</div></Link>
                                                 :
-                                                <div className="ui labeled button" tabindex="0">
-                                                <div className="ui basic blue button">
-                                                  <i className="cart icon"></i> Value
+                                                <Link to={{
+                                                    pathname:`/order/${table.last_active_table}/`
+                                                }}>
+                                                    <div className="ui labeled button" tabindex="0">
+                                                    <div className="ui basic blue button">
+                                                    <i className="cart icon"></i> Value
+                                                    </div>
+                                                    <a className="ui basic left pointing blue label">
+                                                    {table.last_active_table}
+                                                    </a>
                                                 </div>
-                                                <a className="ui basic left pointing blue label">
-                                                  1,048
-                                                </a>
-                                              </div>
+                                              </Link>
                                                 }
                                         </div>
                                     </div>

@@ -7,7 +7,7 @@ class TableSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Table
-        fields = ['title', 'id', 'is_using', 'user_using', 'ordering', 'url']
+        fields = ['title', 'id', 'is_using', 'user_using', 'ordering', 'url', 'last_active_table']
     
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -17,5 +17,6 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = ['title', 'table_related', 'tag_table_related',
                   'user_created', 'user_edited', 'active', 'is_paid',  
-                  'tag_is_paid', 'value', 'paid_value', 'tag_order_items', 'url'
+                  'tag_is_paid', 'value', 'paid_value', 'tag_order_items',
+                  'last_active_table', 'url'
                 ]

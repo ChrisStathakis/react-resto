@@ -8,5 +8,7 @@ urlpatterns = [
     path('', index),
 
     path('create/<int:id>/', TemplateView.as_view(template_name='index.html')),
+    path('order/<int:id>/', TemplateView.as_view(template_name='index.html')),
+
 
 ]
