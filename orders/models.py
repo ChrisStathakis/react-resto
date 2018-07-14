@@ -45,6 +45,17 @@ class Order(models.Model):
         self.paid_value =  order_items.aggregate(Sum('paid_value'))['paid_value__sum'] if order_items else 0
         super(Order, self).save(*args, **kwargs)
 
+    def tag_order_items(self):
+        return self.order_items.all()
+
+    def tag_table_related(self):
+        return f'{self.table_related.title}' if self.table_related else 'No Table'
+
+    def tag_is_paid(self):
+        return 'Is Paid' if self.is_paid else 'No Paid'
+
+    
+
 
 
 class OrderItem(models.Model):

@@ -35,5 +35,26 @@ class Order extends React.Component {
             })
         })
     }
+
+    loadOrder(){
+        const endpoint = '/api/products/';
+        const thisComp = this;
+        const lookupOptions = {
+            method: 'GET',
+            headers: {
+                'Content-Type':'application/json'
+            },
+            credentials: 'include'
+        }
+
+        fetch(endpoint, lookupOptions)
+        .then(function(response){
+            return response.json()
+        }).then(function(responseData){
+            thisComp.setState({
+                products: responseData
+            })
+        })
+    }
 }
 

@@ -2,6 +2,7 @@ import React from 'react';
 import 'whatwg-fetch';
 import Navbar from './Navbar';
 import Tables from './Tables';
+import NavbarPusher from './NavbarPusher';
 
 class Homepage extends React.Component {
 
@@ -51,23 +52,7 @@ class Homepage extends React.Component {
             <div>
                 <Navbar />
                 <div class="pusher">
-                    <div class="ui inverted vertical masthead center aligned segment">
-                        <div class="ui container">
-                            <div class="ui large secondary inverted pointing menu">
-                                <a class="toc item">
-                                <i class="sidebar icon"></i>
-                                </a>
-                                <a class="active item">Home</a>
-                                <a class="item">Work</a>
-                                <a class="item">Company</a>
-                                <a class="item">Careers</a>
-                                <div class="right item">
-                                <a class="ui inverted button">Log in</a>
-                                <a class="ui inverted button">Sign Up</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <NavbarPusher />
                     {doneLoading === true && tables !== null ?
                         <Tables tables={tables} />
                         :<p>bb</p>

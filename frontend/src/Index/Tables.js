@@ -1,5 +1,5 @@
 import React from 'react';
-
+import {Link} from 'react-router-dom';
 
 class Tables extends React.Component{
 
@@ -28,16 +28,19 @@ class Tables extends React.Component{
                                         <div className="content">
                                             <div className="header">{table.title}</div>
                                             <div className="meta">
-                                                    Σερβιτόρος...{table.user_using}
+                                                    Waitress...{table.user_using}
                                             </div>
                                         </div>
                                         <div className="extra content">
                                             {table.is_using === false ?
-                                                <div className="ui green  button">Αδειο</div>
+                                                <Link to={{
+                                                    pathname: `/create/${table.id}/`
+                                                }}>
+                                                <div className="ui green  button">New order</div></Link>
                                                 :
                                                 <div className="ui labeled button" tabindex="0">
                                                 <div className="ui basic blue button">
-                                                  <i className="cart icon"></i> Αξία
+                                                  <i className="cart icon"></i> Value
                                                 </div>
                                                 <a className="ui basic left pointing blue label">
                                                   1,048
