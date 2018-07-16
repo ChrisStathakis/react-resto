@@ -25,5 +25,8 @@ class Product(models.Model):
     def tag_category(self):
         return f'{self.category.title}' if self.category else 'No Category'
 
+    def tag_value(self):
+        return f'{self.value} €'
+
 
 

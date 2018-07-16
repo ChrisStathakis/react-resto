@@ -40,9 +40,8 @@ class Order(models.Model):
     value = models.DecimalField(max_digits=20, decimal_places=2, default=0)
     paid_value = models.DecimalField(max_digits=20, decimal_places=2, default=0)
     
-
-    def __str__(self): 
-        return f'Τραπέζι {self.table_related.title} - Order {self.id}'
+    def __str__(self):
+        return f'table {self.table_related} - {self.id}' if self.table_related else f'{self.id}'
 
     def save(self, *args, **kwargs):
         order_items = self.order_items.all()
@@ -65,9 +64,6 @@ class Order(models.Model):
             return qs_exists.last().id 
         return None
 
-    
-
-
 
 class OrderItem(models.Model):
     timestamp     = models.DateTimeField(auto_now_add=True)
@@ -84,9 +80,8 @@ class OrderItem(models.Model):
     is_paid       = models.BooleanField(default=False)
 
 
-    def __str__(self):
-        return f'Τραπέζι {self.order_related.table_related.title} - Προϊόμ {self.product_related.title}'
-
+    def tag_product_related(self):
+        return f'{self.product_related.title}' if self.product_related else 'No Product'
 
     def save(self, *args, **kwargs):
         self.total_value = self.value * self.qty

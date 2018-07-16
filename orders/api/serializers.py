@@ -20,3 +20,12 @@ class OrderSerializer(serializers.ModelSerializer):
                   'tag_is_paid', 'value', 'paid_value', 'tag_order_items',
                   'last_active_table', 'url'
                 ]
+
+
+class OrderItemSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = OrderItem
+        fields= ['id', 'tag_product_related', 'product_related', 'order_related',
+                 'value', 'paid_value', 'is_paid'
+                ]

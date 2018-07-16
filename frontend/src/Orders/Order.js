@@ -3,6 +3,8 @@ import 'whatwg-fetch';
 
 import Navbar from '../Index/Navbar';
 import NavbarPusher from '../Index/NavbarPusher';
+import OrderProducts from './OrderProducts';
+
 
 class Order extends React.Component {
     
@@ -30,8 +32,10 @@ class Order extends React.Component {
         .then(function(response){
             return response.json()
         }).then(function(responseData){
+
             thisComp.setState({
-                products: responseData
+                products: responseData,
+                doneLoading: true
             })
         })
     }
@@ -42,7 +46,7 @@ class Order extends React.Component {
         const lookupOptions = {
             method: 'GET',
             headers: {
-                'Content-Type':'application/json'
+                'Content-Type': 'application/json'
             },
             credentials: 'include'
         }
@@ -52,7 +56,7 @@ class Order extends React.Component {
             return response.json()
         }).then(function(responseData){
             thisComp.setState({
-                products: responseData
+                order: responseData
             })
         })
     }
@@ -60,7 +64,7 @@ class Order extends React.Component {
     componentDidMount() {
         this.setState({
             order: null,
-            products: [],
+            products: null,
             doneLoading: false
 
         })
@@ -71,67 +75,59 @@ class Order extends React.Component {
     render(){
         const {products} = this.state;
         const {order} = this.state;
-
+        const {doneLoading} = this.state;
         return (
             <div>
                 <Navbar />
                 <div class="pusher">
-                <div class="ui inverted vertical masthead center aligned segment">
-                    <div class="ui container">
-                        <div class="ui large secondary inverted pointing menu">
-                            <a class="toc item">
-                                <i class="sidebar icon"></i>
-                            </a>
-                                <a class="active item">Products</a>
-                                <a class="item">Items</a>
-                                <a class="item">Details</a>
-                                <a class="item">Careers</a>
-                                <div class="right item">
-                                    <a class="ui inverted button">Back</a>
-                                    <a class="ui inverted button">Sign Up</a>
-                                </div>
-                        </div>
-                    </div>
-                </div>
+                    <NavbarPusher />
                 <div className='ui grid container'>
-                    <div className='row'>
-                            <div className="ui top attached tabular menu">
-                                <a className="item" data-tab="first active">Products</a>
-                                <a className="item" data-tab="second">Order Items</a>
-                                <a className="item" data-tab="third">Details</a>
-                                </div>
-                                <div className="ui bottom attached tab segment active" data-tab="first">
-                                <table className="ui orange table">
-                                    <thead>
-                                        <tr>
-                                            <th>Product</th>
-                                            <th>Actions</th>
-                                            <th>In Cart</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                        <td>Apples</td>
-                                        <td>200</td>
-                                        <td>0g</td>
-                                        </tr>
-                                        <tr>
-                                        <td>Orange</td>
-                                        <td>310</td>
-                                        <td>0g</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                </div>
-                                <div className="ui bottom attached tab segment" data-tab="second">
-                                Second
-                                </div>
-                                <div className="ui bottom attached tab segment" data-tab="third">
-                                Third
-                            </div>
+                    <div className='eight wide centered column'>
+                        <h3 className='ui blue header'>Products</h3>
+                        {doneLoading === true && products !== null ? 
+                            <OrderProducts products={products} order_id={order.id} />
+                        :<p>No data</p>}
                         </div>
+                        <div className='eight wide column'>
+                            <h3 className='ui blue header'>Order Details</h3>
+                            <table className="ui orange table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Qty</th>
+                                    <th>Total Price</th>
+                                    <th>Remain Value</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {doneLoading === true && products !== null ? 
+                                    products.map((product)=>{
+                                        return (
+                                            <tr>
+                                                <td>{product.title}</td>
+                                                <td>{product.tag_final_value}</td>
+                                                <td><button className='ui green button'>Add</button></td>
+                                            </tr>
+                                        )
+                                    })
+                            
+                                :
+                                <tr>
+                                    <td>No data</td>
+                                </tr>
+                                    
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div className='eight wide column'>
+                            <p>gr</p>
+                        </div>
+                   
                 </div>
-                </div>
+            </div>
             </div>
         )
     }
