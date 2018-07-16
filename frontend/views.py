@@ -14,6 +14,7 @@ def api_root(request, format=None):
         'tables': reverse('api_tables', request=request, format=format),
         'order': reverse('api_orders', request=request, format=format),
         'order_items': reverse('api_order_items', request=request, format=format),
+        'order_item_detail': reverse('api_order_item_detail', request=request, format=format),
         
     })
 

@@ -1,11 +1,11 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.db.models import F, Sum
-
+from django.conf import settings
 from products.models import Product
 
 User = get_user_model()
-
+CURRENCY = settings.CURRENCY
 
 class Table(models.Model):
     title = models.CharField(unique=True, max_length=150)
@@ -84,6 +84,24 @@ class OrderItem(models.Model):
         return f'{self.product_related.title}' if self.product_related else 'No Product'
 
     def save(self, *args, **kwargs):
+        if self.value < 0.01:
+            self.value = self.product_related.value if self.product_related else 0
         self.total_value = self.value * self.qty
         super(OrderItem, self).save(*args, **kwargs)
         self.order_related.save()
+
+    def tag_value(self):
+        return f'{self.value} {CURRENCY}'
+    
+    def tag_paid_value(self):
+        return f'{self.paid_value} {CURRENCY}'
+
+    def tag_remain(self):
+        remain = self.value - self.paid_value
+        return f'{remain} {CURRENCY}'
+
+    def tag_total_value(self):
+        total = self.value * self.qty
+        return f'{total} {CURRENCY}'
+
+    

@@ -17,15 +17,19 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = ['title', 'table_related', 'tag_table_related',
                   'user_created', 'user_edited', 'active', 'is_paid',  
-                  'tag_is_paid', 'value', 'paid_value', 'tag_order_items',
+                  'tag_is_paid', 'value', 'paid_value',
                   'last_active_table', 'url'
                 ]
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='api_order_item_detail')
 
     class Meta:
         model = OrderItem
-        fields= ['id', 'tag_product_related', 'product_related', 'order_related',
-                 'value', 'paid_value', 'is_paid'
+        fields= ['url',
+                 'id', 'product_related', 'order_related',
+                 'value', 'paid_value', 'is_paid', 'qty',
+                 'tag_product_related', 'tag_value', 'tag_paid_value', 'tag_remain',
+                 'tag_total_value',
                 ]

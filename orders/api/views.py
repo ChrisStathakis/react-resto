@@ -49,3 +49,9 @@ class OrderItemApiListView(generics.ListCreateAPIView):
                         )
 
     
+class OrderItemApiDetailView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = OrderItemSerializer
+    queryset = OrderItem.objects.all()
+    permission_classes = (permissions.IsAuthenticated,)
+
+    
