@@ -47,7 +47,14 @@ class Order(models.Model):
         order_items = self.order_items.all()
         self.value  = order_items.aggregate(Sum('total_value'))['total_value__sum'] if order_items else 0
         self.paid_value =  order_items.aggregate(Sum('paid_value'))['paid_value__sum'] if order_items else 0
+        if self.is_paid:
+            self.paid_value = self.value
+            if self.order_items:
+                self.order_items.all().update(is_paid=True)
         super(Order, self).save(*args, **kwargs)
+
+    def remain_value(self):
+        return self.value - self.paid_value
 
     def tag_order_items(self):
         return self.order_items.all()
@@ -57,6 +64,9 @@ class Order(models.Model):
 
     def tag_paid_value(self):
         return f'{self.paid_value} {CURRENCY}'
+
+    def tag_remain_value(self):
+        return f'{self.remain_value()} {CURRENCY}'    
 
     def tag_table_related(self):
         return f'{self.table_related.title}' if self.table_related else 'No Table'
@@ -87,6 +97,8 @@ class OrderItem(models.Model):
         if self.value < 0.01:
             self.value = self.product_related.value if self.product_related else 0
         self.total_value = self.value * self.qty
+        if self.is_paid:
+            self.paid_value = self.value
         super(OrderItem, self).save(*args, **kwargs)
         self.order_related.save()
 

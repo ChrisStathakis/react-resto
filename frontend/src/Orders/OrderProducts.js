@@ -15,7 +15,7 @@ class Product extends React.Component{
             paid_value: 0,
             is_paid: false,
             qty: 1,
-            product_exists: false
+            
         }
     }
 
@@ -39,7 +39,7 @@ class Product extends React.Component{
         .then(function(response){
             return response.json()
         }).then(function(responseData){
-            console.log(responseData)
+            
         }).catch(function(error){
             console.log('error', error)
         })
@@ -47,7 +47,7 @@ class Product extends React.Component{
 
     updateOrderItem(id, qty) {
         let data = this.state;
-        data.qty = date.qty + qty
+        data.qty = qty;
         const endpoint = `/api/orders-items/detail/${id}/`
         const csrfToken = cookie.load('csrftoken') 
         const thisComp = this;
@@ -66,7 +66,7 @@ class Product extends React.Component{
         .then(function(response){
             return response.json()
         }).then(function(responseData){
-               
+            
         }).catch(function(error){
             console.log('error', error)
         })
@@ -89,14 +89,14 @@ class Product extends React.Component{
         .then(function(response){
             return response.json()
         }).then(function(responseData){
-            console.log('product exists',responseData)
-            console.log('response id', responseData.id)
             let exists_product = responseData
             if (exists_product.length > 0) {
-                thisComp.updateOrderItem(responseData.id, qty)
+                thisComp.updateOrderItem(responseData[0].id, responseData[0].qty+ parseInt(qty))
             } else {
                 thisComp.createOrderItem(qty)
             }
+            thisComp.props.updateOrderPage()
+            
             
         }).catch(function(error){
             console.log('error', error)
@@ -105,8 +105,7 @@ class Product extends React.Component{
 
     handleClick(event){
         event.preventDefault()
-        let qty = event.target.value
-        console.log(qty)
+        const qty = event.target.value;
         this.checkIfExists(this.state.product_related, this.props.order_id, qty)
     }
 
@@ -117,7 +116,7 @@ class Product extends React.Component{
         this.setState({
             product_related: product.id,
             order_related: order_id,
-            value: product.value
+            value: product.value,
         })
     }
 
@@ -139,76 +138,4 @@ class Product extends React.Component{
 
 }
 
-class OrderProducts extends React.Component {
-
-    constructor(props){
-        super(props);
-        this.handleClick = this.handleClick.bind(this);
-        this.state = {
-            qty:1,
-            product_related: null,
-            order_related: null,
-            value: 0,
-            is_paid:false
-        }
-    }
-
-    
-    handleClick(event){
-        event.preventDefault();
-        let key = event.target.name;
-        let value = event.target.value;
-        console.log(key, value)
-        this.setState({
-            qty: value,
-            product_related: key
-        })
-        console.log('after click',this.state)
-        
-    }
-
-    componentDidMount(){
-        const {order_id} = this.props;
-        this.setState({
-            qty:1,
-            product_related: null,
-            order_related: order_id,
-            value: 0,
-            is_paid:false
-        })
-    }
-    render() {
-        const {products} = this.props;
-        const {order_id} = this.props;
-        return (
-            <table className="ui orange table">
-                <thead>
-                    <tr>
-                        <th>Product</th>
-                        <th>Price</th>
-                        <th>Actions</th>
-                    </tr>
-                            </thead>
-                            <tbody>
-                                {products !== undefined ? 
-                                    products.map((product)=>{
-                                        return (
-                                            <Product product={product} order_id={order_id} />
-                                        )
-                                    })
-                            
-                                :
-                                <tr>
-                                    <td>No hgdata</td>
-                                </tr>
-                                    
-                                }
-                                </tbody>
-                            </table>
-        )
-    }
-
-
-}
-
-export default OrderProducts;
+export default Product;

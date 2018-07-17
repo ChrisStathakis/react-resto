@@ -30,10 +30,17 @@ class OrderApiView(generics.ListCreateAPIView):
                         )
 
     
-class OrderDetailApiView(generics.RetrieveDestroyAPIView):
+class OrderDetailApiView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = OrderSerializer
     queryset = Order.objects.all()
     permission_classes = (permissions.IsAuthenticated,)
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+        if instance.is_paid and instance.order_items:
+            for item in instance.order_items.all():
+                item.is_paid=True
+                item.save()
 
 
 class OrderItemApiListView(generics.ListCreateAPIView):

@@ -47,7 +47,7 @@ class Item extends React.Component {
         .then(function(response){
             return response.json()
         }).then(function(responseData){
-            
+            thisComp.props.updateOrderPage()
         }).catch(function(error){
             console.log(error)
         })
@@ -94,18 +94,34 @@ class Item extends React.Component {
         const {qty} = this.state;
         return (
             <tr>
-                <td>{item.tag_product_related}</td>
+                <td>
+                    {item.is_paid === true ? 
+                        <button className="ui blue icon button">
+                        <i className="tiny payment icon"></i></button>
+                        
+                    : <button className="ui red icon button">
+                    <i className="tiny payment icon"></i></button>
+                    }
+                   
+                    
+                    {item.tag_product_related}
+                </td>
                 <td>{item.tag_value}</td>
                 <td>{item.tag_total_value}</td>
                 <td className='warning'>{item.tag_remain}</td>
                 <td>{qty}</td>
-                <td>
-                    <button onClick={this.handleMinus} class="ui red icon button">
-                    <i class="minus icon"></i>
-                    </button>
-                    <button onClick={this.handlePlus} class="ui green icon button">
-                        <i class="plus icon"></i>
-                    </button>
+                <td>   
+                    <div class="ui buttons">
+                        <button onClick={this.handleMinus} className="ui red icon button">
+                        <i className="minus icon"></i>
+                        </button>
+                        <div className="or"></div>
+                        <button onClick={this.handlePlus} className="ui green icon button">
+                            <i className="plus icon"></i>
+                        </button>
+                    </div>
+
+                    
                 </td>
             </tr>
         )
@@ -113,52 +129,4 @@ class Item extends React.Component {
 }
 
 
-class OrderItems extends React.Component {
-
-    constructor(props) {
-        super(props);
-        this.updateOrderItems = this.updateOrderItems.bind(this)
-        this.state = {
-            
-        }
-    }
-
-    updateOrderItems() {
-        this.props.updateOrderItems()
-    }
-
-    render() {
-        const {order_items} = this.props;
-        return (
-            <table className="ui orange table">
-                <thead>
-                    <tr>
-                        <th>Product</th>
-                        <th>Price</th>
-                        <th>Total Price</th>
-                        <th>Remain</th>
-                        <th>Qty</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {order_items !== undefined ? 
-                    order_items.map((item)=>{
-                        return (
-                            <Item item={item} updateOrderItems={this.updateOrderItems} />
-                        )
-                    })        
-                    :
-                    <tr>
-                        <td>No data</td>
-                    </tr>
-                                    
-                }
-                </tbody>
-            </table>
-        )
-    }
-
-}
-
-export default OrderItems;
+export default Item;

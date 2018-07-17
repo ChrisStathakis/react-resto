@@ -19,7 +19,8 @@ class OrderSerializer(serializers.ModelSerializer):
                   'active', 'is_paid', 'table_related', 'value', 'paid_value',
                   'id',
                   'tag_value', 'tag_paid_value', 'tag_table_related',
-                  'tag_is_paid', 'url'
+                  'tag_is_paid', 'remain_value', 'tag_remain_value',
+                  'url'
                 ]
 
 
