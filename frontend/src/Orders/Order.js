@@ -10,6 +10,7 @@ class Order extends React.Component {
     
     constructor(props) {
         super(props);
+        this.updateOrderItems = this.updateOrderItems.bind(this);
         this.state = {
             products: null,
             order: null,
@@ -84,6 +85,10 @@ class Order extends React.Component {
         })
     }
 
+    updateOrderItems(){
+        this.loadOrderItems()
+    }
+
     componentDidMount() {
         const {id} = this.props.match.params;
         this.setState({
@@ -118,11 +123,44 @@ class Order extends React.Component {
                         </div>
                         <div className='eight wide column'>
                             <h3 className='ui blue header'>Order Details</h3>
+                            {doneLoading === true && order !== null ?
+                            <div className="ui small statistics">
+                                <div className="blue statistic">
+                                    <div className="value">
+                                     {order.tag_table_related}
+                                    </div>
+                                    <div className="label">
+                                    Table
+                                    </div>
+                                </div>
+                                <div className="red statistic">
+                                    <div className="value">
+                                        {order.tag_value}
+                                    </div>
+                                    <div class="label">
+                                    Value
+                                    </div>
+                                </div>
+                                <div class=" green statistic">
+                                    <div className="value">
+                                        {order.tag_paid_value}
+                                    </div>
+                                    <div className="label">
+                                    Paid Value
+                                    </div>
+                                </div>
+                            </div>
+                            :<p>Order</p>
+                            }
+                            <br /> <br />
+                            <h3 className='ui blue header'>Order Items</h3>
                             {doneLoading === true && order_items !== null ?
-                            <OrderItems order_items={order_items} />   
+                            <OrderItems order_items={order_items} updateOrderItems={this.updateOrderItems} />   
                         :
                         <p>Null?</p>
                         }
+                        <br /> <br />
+
                         </div>
                         <div className='eight wide column'>
                             <p>gr</p>

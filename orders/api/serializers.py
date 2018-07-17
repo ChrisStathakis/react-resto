@@ -15,10 +15,11 @@ class OrderSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Order
-        fields = ['title', 'table_related', 'tag_table_related',
-                  'user_created', 'user_edited', 'active', 'is_paid',  
-                  'tag_is_paid', 'value', 'paid_value',
-                  'last_active_table', 'url'
+        fields = ['title', 'timestamp', 'user_created', 'user_edited',
+                  'active', 'is_paid', 'table_related', 'value', 'paid_value',
+                  'id',
+                  'tag_value', 'tag_paid_value', 'tag_table_related',
+                  'tag_is_paid', 'url'
                 ]
 
 

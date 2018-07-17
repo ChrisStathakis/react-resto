@@ -52,17 +52,17 @@ class Order(models.Model):
     def tag_order_items(self):
         return self.order_items.all()
 
+    def tag_value(self):
+        return f'{self.value} {CURRENCY}'
+
+    def tag_paid_value(self):
+        return f'{self.paid_value} {CURRENCY}'
+
     def tag_table_related(self):
         return f'{self.table_related.title}' if self.table_related else 'No Table'
 
     def tag_is_paid(self):
         return 'Is Paid' if self.is_paid else 'No Paid'
-
-    def last_active_table(self):
-        qs_exists = Order.objects.filter(active=True, table_related=self.table_related)
-        if qs_exists.exists():
-            return qs_exists.last().id 
-        return None
 
 
 class OrderItem(models.Model):
