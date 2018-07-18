@@ -9,3 +9,4 @@ django-filter
 django-webpack-loader
 whitenoise==3.3.0
 django-allauth
+django-rest-knox

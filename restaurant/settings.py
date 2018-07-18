@@ -39,10 +39,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'rest_framework.authtoken',
+    'rest_auth',
     'django_filters',
+    'knox',
+
+    'accounts',
     'products',
     'orders',
-    'frontend'
+    'frontend',
 ]
 
 MIDDLEWARE = [
@@ -133,3 +138,7 @@ REST_FRAMEWORK = {
 }
 
 CURRENCY = '€'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',),
+}

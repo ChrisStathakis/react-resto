@@ -20,7 +20,9 @@ class NavbarPusher extends React.Component{
                                 <a class="item">History</a>
                                 
                                 <div class="right item">
-                                <a class="ui inverted button">Log in</a>
+                                <Link to={{
+                                    pathname:`/login/`
+                                }}><a class="ui inverted button">Log in</a></Link>
                                 <a class="ui inverted button">Sign Up</a>
                                 </div>
                     </div>

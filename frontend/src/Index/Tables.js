@@ -21,7 +21,7 @@ class Tables extends React.Component{
 
                 <div className='centered row'>
                     <div className="ui link cards">
-                        {tables !== null ?
+                        {tables.length > 0 ?
                             tables.map((table)=>{
                                 return (
                                     <div className="card">

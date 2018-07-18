@@ -16,9 +16,13 @@ class Navbar extends React.Component{
                     <a class="active item">Home</a></Link>
                     <a class="item">History</a>
                     <div class="right menu">
-                    <div class="item">
+                    <Link to={{
+                            pathname:`/login/`
+                    }}><div class="item">
                         <a class="ui button">Log in</a>
                     </div>
+                    </Link>
+                   
                     <div class="item">
                         <a class="ui primary button">Sign Up</a>
                     </div>
