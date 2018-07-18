@@ -1,4 +1,6 @@
 import React from 'react';
+import {Link} from 'react-router-dom';
+
 
 class Navbar extends React.Component{
 
@@ -8,10 +10,11 @@ class Navbar extends React.Component{
             <div>
                 <div class="ui large top fixed hidden menu">
                     <div class="ui container">
-                    <a class="active item">Home</a>
-                    <a class="item">Work</a>
-                    <a class="item">Company</a>
-                    <a class="item">Careers</a>
+                    <Link to={{
+                        pathname:`/`
+                    }}>
+                    <a class="active item">Home</a></Link>
+                    <a class="item">History</a>
                     <div class="right menu">
                     <div class="item">
                         <a class="ui button">Log in</a>
@@ -25,10 +28,11 @@ class Navbar extends React.Component{
 
 
             <div class="ui vertical inverted sidebar menu">
-            <a class="active item">Home</a>
-            <a class="item">Work</a>
-            <a class="item">Company</a>
-            <a class="item">Careers</a>
+            <Link to={{
+                pathname:`/`
+            }}>
+            <a class="active item">Home</a></Link>
+            <a class="item">History</a>
             <a class="item">Login</a>
             <a class="item">Signup</a>
             </div>

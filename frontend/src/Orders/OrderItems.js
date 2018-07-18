@@ -30,7 +30,6 @@ class Item extends React.Component {
         } else {
             data.qty = data.qty-1
         }
-        
         const thisComp = this;
         const csrfToken = cookie.load('csrftoken');
         let lookupOptions = {
@@ -52,6 +51,26 @@ class Item extends React.Component {
             console.log(error)
         })
 
+        if (data.qty === 0) {
+            let lookupOptionsDEL = {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                credentials: 'include',
+            }
+
+            fetch(endpoint, lookupOptionsDEL)
+            .then(function(response){
+                return response.json()
+            }).then(function(responseData){
+                thisComp.props.updateOrderPage()
+            }).catch(function(error){
+                console.log(error)
+            })
+        }
+        
     }
 
     componentDidMount(){
@@ -91,7 +110,7 @@ class Item extends React.Component {
 
     render(){
         const {item} = this.props;
-        const {qty} = this.state;
+
         return (
             <tr>
                 <td>
@@ -109,7 +128,7 @@ class Item extends React.Component {
                 <td>{item.tag_value}</td>
                 <td>{item.tag_total_value}</td>
                 <td className='warning'>{item.tag_remain}</td>
-                <td>{qty}</td>
+                <td>{item.qty}</td>
                 <td>   
                     <div class="ui buttons">
                         <button onClick={this.handleMinus} className="ui red icon button">

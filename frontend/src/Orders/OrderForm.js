@@ -1,7 +1,7 @@
 import React from 'react';
 import 'whatwg-fetch';
 import cookie from 'react-cookies';
-import {Link} from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 import {Redirect} from 'react-router-dom';
 
 
@@ -39,35 +39,51 @@ class OrderForm extends React.Component {
         .then(function(response){
             return response.json()
         }).then(function(responseData){
-            
+            console.log('daad', responseData, thisComp.props)
+            thisComp.props.history.push(`/order/${responseData.id}`)
         }).catch(function(error){
             console.log(error)
         })
     }
 
     updateTable(id){
-        const data = this.state; 
         const endpoint = `/api/table/detail/${id}/`
-        const thisComp = this;
         const csrfToken = cookie.load('csrftoken')
-        let lookupOptions = {
-            method: 'PUT',
+        let lookupOptionsGET = {
+            method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
+                'Content-Type': 'application/json'
             },
-            body: JSON.stringify(data),
             credentials: 'include'
         }
 
-        fetch(endpoint, lookupOptions)
+        fetch(endpoint, lookupOptionsGET)
         .then(function(response){
             return response.json()
         }).then(function(responseData){
-            
+            let data = responseData;
+            data.is_using = true
+            let lookupOptionsPUT = {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify(data),
+                credentials: 'include'
+            }
+            fetch(endpoint, lookupOptionsPUT)
+            .then(function(response){
+                return response.json()
+            }).then(function(responseData){
+                
+            }).catch(function(error){
+                console.log(error)
+            }) 
         }).catch(function(error){
             console.log(error)
         })
+
     }
     
 
@@ -95,9 +111,10 @@ class OrderForm extends React.Component {
 
     handleSubmit(event){
         event.preventDefault();
-        this.createOrder();
         this.updateTable(this.state.table_related)
+        this.createOrder();
     }
+
 
     render() {
         const {state} = this;
@@ -130,4 +147,4 @@ class OrderForm extends React.Component {
 
 }
 
-export default OrderForm;
+export default withRouter(OrderForm);

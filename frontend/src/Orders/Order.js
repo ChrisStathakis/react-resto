@@ -1,6 +1,6 @@
 import React from 'react';
 import 'whatwg-fetch';
-import { Redirect } from 'react-router-dom'
+import { withRouter } from 'react-router-dom'
 import Navbar from '../Index/Navbar';
 import NavbarPusher from '../Index/NavbarPusher';
 import Product from './OrderProducts';
@@ -89,7 +89,6 @@ class Order extends React.Component {
     }
 
     submitPaidButton(event){
-        console.log('works!')
         event.preventDefault();
         this.submitPaidOrder()
     }
@@ -147,7 +146,6 @@ class Order extends React.Component {
         .then(function(response){
             return response.json()
         }).then(function(responseData){
-            console.log(responseData)
             data = responseData
             data.is_using = false
             const lookupOptionsPUT = {
@@ -165,7 +163,7 @@ class Order extends React.Component {
             .then(function(response){
                 return response.json()
             }).then(function(responseData){
-                thisComp.renderRedirect()
+                thisComp.props.history.push('/')
             }).catch(function(error){
                 console.log(error)
             })
@@ -229,14 +227,6 @@ class Order extends React.Component {
                                         Value
                                         </div>
                                     </div>
-                                    <div class=" green statistic">
-                                        <div className="value">
-                                            {order.tag_paid_value}
-                                        </div>
-                                        <div className="label">
-                                        Paid Value
-                                        </div>
-                                    </div>
                                 </div>
                                 :<p>Order</p>
                                 }
@@ -276,24 +266,24 @@ class Order extends React.Component {
                             <div className="ui raised segment">
                                 <h3 className='ui blue header'>Actions</h3>
                                 { order.is_paid === true ?
-                                    <button className="ui labeled button" tabindex="0">
+                                    <div className="ui labeled button" tabindex="0">
                                         <div onClick={this.submitPaidButton} className="ui blue button">
                                             <i className="payment icon"></i> Pay
                                         </div>
                                         <a className="ui basic label">
                                             Is Paid
                                         </a>
-                                    </button>
+                                    </div>
                                     
                                     :
-                                    <button className="ui labeled button" tabindex="0">
+                                    <div className="ui labeled button" tabindex="0">
                                         <div onClick={this.submitPaidButton} className="ui red button">
                                             <i className="payment icon"></i> Pay
-                                        </div>
-                                            {order.tag_remain_value}
+                                        </div> 
                                         <a className="ui basic label">
+                                        {order.tag_remain_value}
                                         </a>
-                                    </button>
+                                    </div>
                                     }
                                 
                                 
@@ -325,8 +315,7 @@ class Order extends React.Component {
                                             :
                                             <tr>
                                                 <td>No data</td>
-                                            </tr>
-                                                            
+                                            </tr>                  
                                         }
                                         </tbody>
                                     </table>   
@@ -354,4 +343,4 @@ class Order extends React.Component {
     }
 }
 
-export default Order;
+export default withRouter(Order);
