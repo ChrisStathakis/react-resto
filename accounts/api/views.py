@@ -1,4 +1,5 @@
 from rest_framework import viewsets, permissions, generics
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth import login
 
@@ -49,10 +50,11 @@ class UserApiTest(generics.ListAPIView):
         return queryset
 
 
-class UserAPI(generics.RetrieveAPIView):
-    permission_classes = [permissions.IsAuthenticated, ]
-    serializer_class = UserSerializer
+class UserAPI(APIView):
+    
+    def get(self, request, format=None):
+        serializer = UserSerializer(request.user)
+        print(serializer.data)
+        return Response(serializer.data)
 
-    def get_object(self):
-        print('here')
-        return self.request.user
+

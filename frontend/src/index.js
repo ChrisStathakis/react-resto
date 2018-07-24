@@ -7,7 +7,7 @@ import 'whatwg-fetch';
 import Homepage from './Index/Homepage';
 import OrderCreate from './Orders/OrderCreate'
 import Order from './Orders/Order';
-import Login from './Login/Login';
+
 
 
 class App extends React.Component {
@@ -32,7 +32,6 @@ class App extends React.Component {
                 <Switch>
                     <Route exact path='/create/:id/' component={OrderCreate} />
                     <Route exact path='/order/:id/' component={Order} />
-                    <Route exact path='/login/' component={Login} />
                     <Route component={Homepage} />
                 </Switch>
             </BrowserRouter>

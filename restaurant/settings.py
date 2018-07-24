@@ -133,12 +133,20 @@ STATICFILES_DIRS  = [
     os.path.join(BASE_DIR, 'frontend/static/')
 ]
 
-REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
-}
-
 CURRENCY = '€'
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication',),
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',),
+     
 }
+
+JWT_AUTH = {
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'users.tools.my_jwt_response_handler'
+}
+
+CORS_ORIGIN_WHITELIST = (
+    'localhost:3000/'
+)
