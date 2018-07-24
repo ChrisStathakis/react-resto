@@ -31,45 +31,28 @@ class NavbarPusher extends React.Component{
     render(){
         const {user} = this.state;
         return (
-            <div class="ui inverted vertical masthead center aligned segment">
-                <div class="ui container">
-                    <div class="ui large secondary inverted pointing menu">
-                        <a class="toc item">
-                                <i class="sidebar icon"></i>
-                                </a>
-                                <Link to={{
-                                    pathname:`/`
-                                }}>
-                                <a class="item">Home</a></Link>
-                                <a class="item">History</a>
-                                {user.username !== undefined && user.username.length >1 ?
-                                <div class="right menu">
-                                
-                                  
-                                    <div class="item"><a class="ui button">{this.state.user.username}</a></div>
-                                    
-                                    <div class="item">
-                                        <a href='logout'class="ui primary button">Logout</a>
-                                    </div>
-                                
-                                    </div>
-                                :
-                                <div class="right menu">
-                                    <div class="item">
-                                    <a href='login/' class="ui button">Log in</a>
-                                </div>
-                              
-                            
-                                <div class="item">
-                                    <a class="ui primary button">Sign Up</a>
-                                </div>
-                                </div>
-                                
-                                }
-                                
-                                </div>
-                            </div>
-                        </div>
+            <div className="ui large secondary inverted pointing menu">
+                <a className="toc item">
+                    <i className="sidebar icon"></i>
+                </a>
+                <Link to={{
+                    pathname:`/`
+                }}><a className="item">Home</a></Link>
+                <a className="item">History</a>
+
+                {user.username !== undefined && user.username.length > 1 ?
+                    <div className="right menu">
+                        <a class="ui button">{this.state.user.username}</a>
+                        <a href='logout'class="ui primary button">Logout</a>           
+                    </div>
+                :
+                    <div className="right menu">
+                        <a href='login/' class="ui button">Log in</a>
+                        <a claclassName="ui primary button">Sign Up</a>
+                    </div>
+            
+                }
+            </div>
         )
     }
 }

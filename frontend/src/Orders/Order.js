@@ -201,15 +201,24 @@ class Order extends React.Component {
         const {doneLoading} = this.state;
         return (
             <div>
-                <Navbar />
-                <div class="pusher">
-                    <NavbarPusher />
-                    <br /> <br />
-                    <div className='ui grid container'>
-                        <div className='eight wide centered column'>
-                            <div className='ui raised segment'>
-                                <h3 className='ui blue header'>Order Details</h3>
-                                {doneLoading === true && order !== null ?
+               <Navbar />
+                <div className="ui inverted vertical masthead center aligned segment">
+                    <div className="ui container">
+                        <NavbarPusher />
+                    </div>
+                    <div className="ui text container">
+                        <h1 className="ui inverted header">Λεπτο</h1>
+                        <br /> <br />
+                    </div>
+                </div>
+                <h3 className="ui center aligned header">Δεδομένα</h3>
+                
+
+                <div className="ui two column doubling grid">
+                    <div className='column'>
+                        <div className='ui raised segment'>
+                        <h3 className='ui blue header'>Order Details</h3>
+                            {doneLoading === true && order !== null ?
                                 <div className="ui small statistics">
                                     <div className="blue statistic">
                                         <div className="value">
@@ -229,11 +238,11 @@ class Order extends React.Component {
                                     </div>
                                 </div>
                                 :<p>Order</p>
-                                }
-                            </div>
-                            <div className='ui raised segment'>
-                                <h3 className='ui blue header'>Products</h3>
-                                    {doneLoading === true && products !== null ? 
+                            }
+                        </div>
+                        <div className='ui raised segment'>
+                            <h3 className='ui blue header'>Products</h3>
+                                {doneLoading === true && products !== null ? 
                                     <table className="ui orange table">
                                         <thead>
                                             <tr>
@@ -257,11 +266,11 @@ class Order extends React.Component {
                                         </tbody>
                                     </table>
                                     :<p>No data</p>
-                                    }
-                            </div>
+                                }
                         </div>
+                    </div>
                         
-                        <div className='eight wide column'>
+                        <div className='column'>
                             {doneLoading === true && order !== null ? 
                             <div className="ui raised segment">
                                 <h3 className='ui blue header'>Actions</h3>
@@ -338,7 +347,8 @@ class Order extends React.Component {
                         </div>
                 </div>
             </div>
-            </div>
+            
+        
         )
     }
 }
