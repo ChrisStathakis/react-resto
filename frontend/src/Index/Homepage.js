@@ -51,16 +51,24 @@ class Homepage extends React.Component {
         return(
             <div>
                 <Navbar />
-                <div class="pusher">
-                    <NavbarPusher />
-                    {doneLoading === true && tables !== null ?
-                        <Tables tables={tables} />
-                        :<p>bb</p>
-                    }
-
-
+                <div className="ui inverted vertical masthead center aligned segment">
+                    <div className="ui container">
+                        <NavbarPusher />
+                    </div>
+                    <div className="ui text container">
+                        <h1 className="ui inverted header">Reports</h1>
+                        <br /> <br />
+                    </div>
                 </div>
-            </div>
+                <h3 className="ui center aligned header">Data Flow</h3>
+                {doneLoading === true && tables !== null ?
+                    <Tables tables={tables} />
+                    :<p>bb</p>
+                }
+
+
+        </div>
+            
         )
     }
 

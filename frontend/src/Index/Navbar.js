@@ -38,7 +38,10 @@ class Navbar extends React.Component{
                         pathname:`/`
                     }}>
                     <a class="item">Home</a></Link>
-                    <a class="item">History</a>
+                    <Link to={{
+                        pathname: '/history/'
+                    }}>
+                    <a className="item">History</a></Link>
                     <div class="right menu">
                     {user.username !== undefined && user.username.length >1 ?
                         <div>
@@ -69,7 +72,10 @@ class Navbar extends React.Component{
                 pathname:`/`
             }}>
             <a class="item">Home</a></Link>
-            <a class="item">History</a>
+            <Link to={{
+                    pathname: '/history/'
+            }}>
+            <a className="item">History</a></Link>
             <a class="item">Login</a>
             <a class="item">Signup</a>
             </div>

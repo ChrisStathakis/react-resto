@@ -7,6 +7,7 @@ import 'whatwg-fetch';
 import Homepage from './Index/Homepage';
 import OrderCreate from './Orders/OrderCreate'
 import Order from './Orders/Order';
+import HistoryPage from './History/History';
 
 
 
@@ -32,6 +33,7 @@ class App extends React.Component {
                 <Switch>
                     <Route exact path='/create/:id/' component={OrderCreate} />
                     <Route exact path='/order/:id/' component={Order} />
+                    <Route exact path='/history/' component={HistoryPage} />
                     <Route component={Homepage} />
                 </Switch>
             </BrowserRouter>

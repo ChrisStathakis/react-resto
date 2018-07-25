@@ -1,11 +1,13 @@
 import React from 'react';
 import 'whatwg-fetch';
-import { withRouter } from 'react-router-dom'
+import { withRouter } from 'react-router-dom';
+import getData from '../index/help';
 import Navbar from '../Index/Navbar';
 import NavbarPusher from '../Index/NavbarPusher';
-import Product from './OrderProducts';
-import Item from './OrderItems';
 import cookie from '../../../node_modules/react-cookies';
+import OrderLeftColumn from './OrderLeftColumn';
+import OrderRightColumn from './OrderRightColumn';
+
 
 
 class Order extends React.Component {
@@ -18,38 +20,48 @@ class Order extends React.Component {
         this.state = {
             products: null,
             order: null,
-            order_items: null,
+            order_items: [],
             doneLoading: false
         }
+    }
+
+    componentDidMount() {
+        const {id} = this.props.match.params;
+        this.loadOrder(id);
+        this.loadOrderItems(id)
+        this.loadProducts();
+
+        this.setState({
+            doneLoading: true
+        })
     }
 
     loadProducts(){
         const endpoint = '/api/products/';
         const thisComp = this;
-        const lookupOptions = {
-            method: 'GET',
-            headers: {
-                'Content-Type':'application/json'
-            },
-            credentials: 'include'
-        }
-
-        fetch(endpoint, lookupOptions)
-        .then(function(response){
-            return response.json()
-        }).then(function(responseData){
-
-            thisComp.setState({
-                products: responseData,
-                doneLoading: true
-            })
-        })
+        getData(endpoint, thisComp, 'products')
     }
-
+    
     loadOrder(id){
         const endpoint = `/api/order/detail/${id}/`;
         const thisComp = this;
-        const lookupOptions = {
+        getData(endpoint, thisComp, 'order')
+    }
+
+    loadOrderItems(id){
+        const endpoint = `/api/orders-items/?order_related=${id}`;
+        const thisComp = this;
+        getData(endpoint, thisComp, 'order_items')
+    }
+
+    handleAddProduct = (id, qty)=> {
+        this.checkIfExists(id, this.state.order.id, qty)
+    }
+
+    checkIfExists(product_id, order_id, qty) {
+        const endpoint = `/api/orders-items/?order_related=${order_id}&product_related=${product_id}`
+        const thisComp = this;
+        let lookupOptions = {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -61,41 +73,181 @@ class Order extends React.Component {
         .then(function(response){
             return response.json()
         }).then(function(responseData){
-            thisComp.setState({
-                order: responseData
-            })
+            let exists_product = responseData
+            if (exists_product.length > 0) {
+                thisComp.updateOrderItem(exists_product[0], responseData[0].qty+ parseInt(qty))
+            } else {
+                thisComp.createOrderItem(product_id, order_id, qty)
+            }
+            
+        }).catch(function(error){
+            console.log('error', error)
         })
     }
 
-    loadOrderItems(id){
-        const endpoint = `/api/orders-items/?order_related=${id}`;
+
+    createOrderItem(product_id, order_id, qty) {
+        const data = {
+            product_related: product_id,
+            order_related: order_id,
+            qty: qty,
+            is_paid:false
+        }
+        const endpoint = '/api/orders-items/';
         const thisComp = this;
-        const lookupOptions = {
-            method: 'GET',
+        const csrfToken = cookie.load('csrftoken');
+        let lookupOptions = {
+            method: 'POST',
             headers: {
-                'Content-Type':'application/json'
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
             },
-            credentials: 'include'
+            credentials: 'include',
+            body: JSON.stringify(data)
         }
 
         fetch(endpoint, lookupOptions)
         .then(function(response){
             return response.json()
         }).then(function(responseData){
+            let new_data = thisComp.state.order_items.concat(responseData)
             thisComp.setState({
-                order_items: responseData,
+                order_items: new_data
             })
+        }).catch(function(error){
+            console.log('error', error)
         })
     }
 
-    submitPaidButton(event){
+    updateOrderItem(order_item, qty) {
+        let data = order_item;
+        data.qty = qty;
+        const endpoint = `/api/orders-items/detail/${order_item.id}/`
+        const csrfToken = cookie.load('csrftoken') 
+        const thisComp = this;
+        let lookupOptions = {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            credentials: 'include',
+            body: JSON.stringify(data)
+        }
+
+        fetch(endpoint, lookupOptions)
+        .then(function(response){
+            return response.json()
+        }).then(function(responseData){
+            let current_data = thisComp.state.order_items
+            const end_data = current_data.map((data_)=>{
+                console.log('loop', data_, responseData)
+                if (data_.id === responseData.id){
+                    return (
+                        Object.assign({}, responseData,{
+                            qty: qty
+                        })
+                    )
+                } else {
+                    return data
+                }
+            })
+            thisComp.setState({
+                order_items: end_data
+            })
+        }).catch(function(error){
+            console.log('error', error)
+        })
+    }
+
+    updateItem(type_){
+        const {id} = this.state;
+        const endpoint = `/api/orders-items/detail/${id}/`;
+        let data = this.state;
+        if(type_ === 'plus'){
+            data.qty = data.qty+1
+        } else {
+            data.qty = data.qty-1
+        }
+        const thisComp = this;
+        const csrfToken = cookie.load('csrftoken');
+        let lookupOptions = {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            credentials: 'include',
+            body: JSON.stringify(data)
+        }
+
+        fetch(endpoint, lookupOptions)
+        .then(function(response){
+            return response.json()
+        }).then(function(responseData){
+            thisComp.props.updateOrderPage()
+        }).catch(function(error){
+            console.log(error)
+        })
+
+        if (data.qty === 0) {
+            let lookupOptionsDEL = {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                credentials: 'include',
+            }
+
+            fetch(endpoint, lookupOptionsDEL)
+            .then(function(response){
+                return response.json()
+            }).then(function(responseData){
+                thisComp.props.updateOrderPage()
+            }).catch(function(error){
+                console.log(error)
+            })
+        }
+        
+    }
+
+    handlePlus(event) {
+        event.preventDefault()
+        let qty_ = this.state.qty + 1
+        console.log(this.state, qty_)
+        this.setState({
+            qty: qty_
+        })
+        console.log(this.state)
+        let type_ = 'plus'
+        this.updateItem(type_)
+    }
+
+    handleMinus(event){
         event.preventDefault();
+        let qty_ = this.state.qty -1
+        this.setState({
+            qty: qty_
+        })
+        let type_ = 'minus'
+        this.updateItem(type_)
+    }
+
+    updateOrderItemStatus = () =>{
+
+    }
+
+    submitPaidButton = () =>{
         this.submitPaidOrder()
     }
 
     submitPaidOrder(){
-        let data = {
-            is_paid: true
+        let data = this.state.order;
+        if (data.is_paid === false) {
+            data.is_paid = true
+        } else {
+            data.is_paid= false
         }
         const {id} = this.props.match.params;
         const endpoint = `/api/order/detail/${id}/`;
@@ -115,7 +267,16 @@ class Order extends React.Component {
         .then(function(response){
             return response.json()
         }).then(function(responseData){
-            thisComp.updateOrderPage()
+            let order_items_ = thisComp.state.order_items
+            new_order_items = order_items_.map((item)=>{
+                let new_item = item
+                new_item.is_paid = !item.is_paid
+                return new_item
+            })
+            thisComp.setState({
+                order: responseData,
+                order_items: new_order_items
+            })
         }).catch(function(error){
             console.log(error)
         })
@@ -179,26 +340,8 @@ class Order extends React.Component {
         this.loadOrderItems(id);
     }
 
-    componentDidMount() {
-        const {id} = this.props.match.params;
-        this.setState({
-            order: null,
-            products: null,
-            order_items: null,
-            doneLoading: false
-
-        })
-        this.loadOrder(id);
-        this.loadOrderItems(id)
-        this.loadProducts();
-    }
-
     render(){
-        const {products} = this.state;
-        const {order} = this.state;
-        const {id} = this.props.match.params;
-        const {order_items} = this.state;
-        const {doneLoading} = this.state;
+        console.log('render', this.state.order, this.state.products)
         return (
             <div>
                <Navbar />
@@ -212,143 +355,27 @@ class Order extends React.Component {
                     </div>
                 </div>
                 <h3 className="ui center aligned header">Δεδομένα</h3>
-                
-
                 <div className="ui two column doubling grid">
-                    <div className='column'>
-                        <div className='ui raised segment'>
-                        <h3 className='ui blue header'>Order Details</h3>
-                            {doneLoading === true && order !== null ?
-                                <div className="ui small statistics">
-                                    <div className="blue statistic">
-                                        <div className="value">
-                                        {order.tag_table_related}
-                                        </div>
-                                        <div className="label">
-                                        Table
-                                        </div>
-                                    </div>
-                                    <div className="red statistic">
-                                        <div className="value">
-                                            {order.tag_value}
-                                        </div>
-                                        <div class="label">
-                                        Value
-                                        </div>
-                                    </div>
-                                </div>
-                                :<p>Order</p>
-                            }
-                        </div>
-                        <div className='ui raised segment'>
-                            <h3 className='ui blue header'>Products</h3>
-                                {doneLoading === true && products !== null ? 
-                                    <table className="ui orange table">
-                                        <thead>
-                                            <tr>
-                                                <th>Product</th>
-                                                <th>Price</th>
-                                                <th>Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {products !== undefined ? 
-                                                products.map((product)=>{
-                                                    return (
-                                                        <Product product={product} order_id={id} updateOrderPage={this.updateOrderPage} />
-                                                        )
-                                                    })
-                                                :
-                                                <tr>
-                                                    <td>No hgdata</td>
-                                                </tr>          
-                                            }
-                                        </tbody>
-                                    </table>
-                                    :<p>No data</p>
-                                }
-                        </div>
-                    </div>
-                        
-                        <div className='column'>
-                            {doneLoading === true && order !== null ? 
-                            <div className="ui raised segment">
-                                <h3 className='ui blue header'>Actions</h3>
-                                { order.is_paid === true ?
-                                    <div className="ui labeled button" tabindex="0">
-                                        <div onClick={this.submitPaidButton} className="ui blue button">
-                                            <i className="payment icon"></i> Pay
-                                        </div>
-                                        <a className="ui basic label">
-                                            Is Paid
-                                        </a>
-                                    </div>
-                                    
-                                    :
-                                    <div className="ui labeled button" tabindex="0">
-                                        <div onClick={this.submitPaidButton} className="ui red button">
-                                            <i className="payment icon"></i> Pay
-                                        </div> 
-                                        <a className="ui basic label">
-                                        {order.tag_remain_value}
-                                        </a>
-                                    </div>
-                                    }
-                                
-                                
-                            </div>
-                            :<p>h</p>
-                            }
-                            <br /> <br />
-                            <div className="ui raised segment">
-                                <h3 className='ui blue header'>Order Items</h3>
-                                {doneLoading === true && order_items !== null ?
-                                    <table className="ui orange table">
-                                        <thead>
-                                            <tr>
-                                                <th>Product</th>
-                                                <th>Price</th>
-                                                <th>Total Price</th>
-                                                <th>Remain</th>
-                                                <th>Qty</th>
-                                                <th>Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                        {order_items !== undefined ? 
-                                            order_items.map((item)=>{
-                                                return (
-                                                    <Item item={item} updateOrderPage={this.updateOrderPage} />
-                                                )
-                                            })        
-                                            :
-                                            <tr>
-                                                <td>No data</td>
-                                            </tr>                  
-                                        }
-                                        </tbody>
-                                    </table>   
-                                    :
-                                    <p>Null?</p>
-                                }
-                            </div>
-                        
-                        <br /> 
-                        <div className='ui raised segment'>
-                            <div className="ui buttons">
-                                <button className="ui button">Cancel</button>
-                                <div className="or"></div>
-                                <button onClick={this.submitCloseTable} className="ui positive button">Close Table</button>
-                            </div>
-                            </div>
-                            <div className='eight wide column'>
-                                <p>gr</p>
-                            </div>
-                        </div>
+                    {this.state.products !== null && this.state.order !== null ? 
+                    <OrderLeftColumn 
+                        products={this.state.products}
+                        order={this.state.order}
+                        handleAddProduct={this.handleAddProduct}
+                    />
+                    :<p>No data</p>
+                    }
+                    {this.state.order !== undefined && this.state.order !== null ?
+                         <OrderRightColumn 
+                         order_items={this.state.order_items} 
+                         order={this.state.order}  
+                         updateOrderItemStatus={this.updateOrderItemStatus}
+                         submitPaidButton={this.submitPaidButton}
+                     />  
+                    :
+                    <p>No data</p>
+                    }                 
                 </div>
             </div>
-            
-        
         )
     }
 }

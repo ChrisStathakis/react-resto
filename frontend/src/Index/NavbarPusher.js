@@ -1,6 +1,6 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
-import getData from './help'
+import getData from './help';
 
 class NavbarPusher extends React.Component{
 
@@ -38,7 +38,10 @@ class NavbarPusher extends React.Component{
                 <Link to={{
                     pathname:`/`
                 }}><a className="item">Home</a></Link>
-                <a className="item">History</a>
+                <Link to={{
+                    pathname: '/history/'
+                }}>
+                <a className="item">History</a></Link>
 
                 {user.username !== undefined && user.username.length > 1 ?
                     <div className="right menu">
