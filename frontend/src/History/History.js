@@ -3,6 +3,7 @@ import getData from '../index/help';
 import Navbar from '../Index/Navbar';
 import NavbarPusher from '../index/NavbarPusher';
 
+import moment from 'moment'
 
 class HistoryPage extends React.Component{
 
@@ -55,15 +56,13 @@ class HistoryPage extends React.Component{
                             {this.state.orders.length > 0 ? this.state.orders.map((order)=>{
                                 return (
                                     <tr>
-                                        <td>{order.timestamp}</td>
+                                        <td>{order.tag_timestamp}</td>
                                         <td>{order.title}</td>
                                         <td>{order.tag_is_paid}</td>
                                         <td>{order.tag_value}</td>
                                     </tr>
                                 )
-
                             })
-                        
                             :
                                 <p>No data</p>
                             }

@@ -1,24 +1,29 @@
 import React from 'react';
 import 'whatwg-fetch';
 import 'react-cookies';
-import cookie from 'react-cookies';
+
+
 
 class Item extends React.Component {
     
     constructor(props){
         super(props);
-        this.handleClick = this.handleClick.bind(this)
-
     }
 
-    handleClick(event) {
-        event.preventDefault()
-        this.updateOrderItemStatus()
-    }
+    handleAdd = () => {
+        let id = this.props.item.id;
+        let qty = this.props.item.qty + 1;
+        this.props.updateOrderItemStatus(id, qty)
 
-    updateOrderItemStatus(item_id, qty) {
-        this.props.updateOrderItemStatus(item_id, qty)
-    }
+    };
+
+    handleRemove = () => {
+        let id = this.props.item.id;
+        let qty = this.props.item.qty - 1;
+        this.props.updateOrderItemStatus(id, qty)
+    };
+
+
 
     render(){
         const {item} = this.props;
@@ -27,25 +32,24 @@ class Item extends React.Component {
                 <td>
                     {item.is_paid === true ? 
                         <button className="ui blue icon button">
-                        <i className="tiny payment icon"></i></button>
+                        <i className="tiny payment icon" /></button>
                         
                     : <button className="ui red icon button">
-                    <i className="tiny payment icon"></i></button>
+                    <i className="tiny payment icon" /></button>
                     }
                     {item.tag_product_related}
                 </td>
                 <td>{item.tag_value}</td>
                 <td>{item.tag_total_value}</td>
-                <td className='warning'>{item.tag_remain}</td>
-                <td>{item.qty}</td>
+                <td className="warning">{item.qty}</td>
                 <td>   
-                    <div class="ui buttons">
-                        <button onClick={this.handleClick} className="ui red icon button">
-                        <i className="minus icon"></i>
+                    <div className="ui buttons">
+                        <button onClick={this.handleRemove} className="ui red icon button">
+                        <i className="minus icon" />
                         </button>
-                        <div className="or"></div>
-                        <button onClick={this.handleClick} className="ui green icon button">
-                            <i className="plus icon"></i>
+                        <div className="or" />
+                        <button onClick={this.handleAdd} className="ui green icon button">
+                            <i className="plus icon" />
                         </button>
                     </div>
 

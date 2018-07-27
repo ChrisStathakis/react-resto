@@ -3,7 +3,7 @@ import React from 'react';
 class OrderLeftColumn extends React.Component {
 
     constructor(props){
-        super(props)
+        super(props);
         this.handleAddProduct = this.handleAddProduct.bind(this);
     }
     
@@ -20,7 +20,7 @@ class OrderLeftColumn extends React.Component {
                          handleAddProduct={this.handleAddProduct}
                 />
                 )
-            })
+            });
         return (
             <div className='column'>
                 <div className='ui raised segment'>

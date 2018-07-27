@@ -1,7 +1,7 @@
 from django.db import models
+from django.conf import settings
 
-# Create your models here.
-
+CURRENCY = settings.CURRENCY
 
 
 class Category(models.Model):
@@ -14,9 +14,9 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    active   = models.BooleanField(default=True)
-    title    = models.CharField(max_length=150)
-    value    = models.DecimalField(max_digits=20, decimal_places=2, default=0)
+    active = models.BooleanField(default=True)
+    title = models.CharField(max_length=150)
+    value = models.DecimalField(max_digits=20, decimal_places=2, default=0)
     category = models.ForeignKey(Category, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
@@ -26,7 +26,7 @@ class Product(models.Model):
         return f'{self.category.title}' if self.category else 'No Category'
 
     def tag_value(self):
-        return f'{self.value} €'
+        return f'{self.value} {CURRENCY}'
 
 
 

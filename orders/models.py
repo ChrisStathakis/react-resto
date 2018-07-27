@@ -7,6 +7,7 @@ from products.models import Product
 User = get_user_model()
 CURRENCY = settings.CURRENCY
 
+
 class Table(models.Model):
     title = models.CharField(unique=True, max_length=150)
     active = models.BooleanField(default=True)
@@ -17,7 +18,6 @@ class Table(models.Model):
     class Meta:
         ordering = ['-ordering',]
 
-
     def __str__(self):
         return self.title
 
@@ -26,6 +26,7 @@ class Table(models.Model):
         if qs_exists.exists():
             return qs_exists.last().id 
         return None
+
 
 class Order(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -39,14 +40,17 @@ class Order(models.Model):
 
     value = models.DecimalField(max_digits=20, decimal_places=2, default=0)
     paid_value = models.DecimalField(max_digits=20, decimal_places=2, default=0)
+
+    class Meta:
+        ordering = ['-timestamp',]
     
     def __str__(self):
         return f'table {self.table_related} - {self.id}' if self.table_related else f'{self.id}'
 
     def save(self, *args, **kwargs):
         order_items = self.order_items.all()
-        self.value  = order_items.aggregate(Sum('total_value'))['total_value__sum'] if order_items else 0
-        self.paid_value =  order_items.aggregate(Sum('paid_value'))['paid_value__sum'] if order_items else 0
+        self.value = order_items.aggregate(Sum('total_value'))['total_value__sum'] if order_items else 0
+        self.paid_value = order_items.aggregate(Sum('paid_value'))['paid_value__sum'] if order_items else 0
         if self.is_paid:
             self.paid_value = self.value
             if self.order_items:
@@ -74,20 +78,23 @@ class Order(models.Model):
     def tag_is_paid(self):
         return 'Is Paid' if self.is_paid else 'No Paid'
 
+    def tag_timestamp(self):
+        return self.timestamp.date()
+
 
 class OrderItem(models.Model):
-    timestamp     = models.DateTimeField(auto_now_add=True)
-    user_created  = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='order_item_created')
-    user_edited   = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='order_item_edited')
+    timestamp       = models.DateTimeField(auto_now_add=True)
+    user_created    = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='order_item_created')
+    user_edited     = models.ForeignKey(User, null=True, on_delete=models.SET_NULL, related_name='order_item_edited')
     
     product_related = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
-    order_related = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items')
+    order_related   = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items')
 
-    qty           = models.IntegerField(default=1)
-    value         = models.DecimalField(max_digits=20, decimal_places=2, default=0)
-    total_value   = models.DecimalField(max_digits=20, decimal_places=2, default=0)
-    paid_value    = models.DecimalField(max_digits=20, decimal_places=2, default=0)
-    is_paid       = models.BooleanField(default=False)
+    qty             = models.IntegerField(default=1)
+    value           = models.DecimalField(max_digits=20, decimal_places=2, default=0)
+    total_value     = models.DecimalField(max_digits=20, decimal_places=2, default=0)
+    paid_value      = models.DecimalField(max_digits=20, decimal_places=2, default=0)
+    is_paid         = models.BooleanField(default=False)
 
 
     def tag_product_related(self):
@@ -116,4 +123,3 @@ class OrderItem(models.Model):
         total = self.value * self.qty
         return f'{total} {CURRENCY}'
 
-    

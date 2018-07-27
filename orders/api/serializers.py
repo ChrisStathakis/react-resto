@@ -20,7 +20,7 @@ class OrderSerializer(serializers.ModelSerializer):
                   'id',
                   'tag_value', 'tag_paid_value', 'tag_table_related',
                   'tag_is_paid', 'remain_value', 'tag_remain_value',
-                  'url'
+                  'url', 'tag_timestamp'
                 ]
 
 

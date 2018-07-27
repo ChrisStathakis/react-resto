@@ -14,7 +14,6 @@ class Order extends React.Component {
     
     constructor(props) {
         super(props);
-        this.updateOrderPage = this.updateOrderPage.bind(this);
         this.submitPaidButton = this.submitPaidButton.bind(this);
         this.submitCloseTable = this.submitCloseTable.bind(this);
         this.state = {
@@ -28,7 +27,7 @@ class Order extends React.Component {
     componentDidMount() {
         const {id} = this.props.match.params;
         this.loadOrder(id);
-        this.loadOrderItems(id)
+        this.loadOrderItems(id);
         this.loadProducts();
 
         this.setState({
@@ -56,10 +55,10 @@ class Order extends React.Component {
 
     handleAddProduct = (id, qty)=> {
         this.checkIfExists(id, this.state.order.id, qty)
-    }
+    };
 
     checkIfExists(product_id, order_id, qty) {
-        const endpoint = `/api/orders-items/?order_related=${order_id}&product_related=${product_id}`
+        const endpoint = `/api/orders-items/?order_related=${order_id}&product_related=${product_id}`;
         const thisComp = this;
         let lookupOptions = {
             method: 'GET',
@@ -67,13 +66,13 @@ class Order extends React.Component {
                 'Content-Type': 'application/json'
             },
             credentials: 'include'
-        }
+        };
 
         fetch(endpoint, lookupOptions)
         .then(function(response){
             return response.json()
         }).then(function(responseData){
-            let exists_product = responseData
+            let exists_product = responseData;
             if (exists_product.length > 0) {
                 thisComp.updateOrderItem(exists_product[0], responseData[0].qty+ parseInt(qty))
             } else {
@@ -92,7 +91,7 @@ class Order extends React.Component {
             order_related: order_id,
             qty: qty,
             is_paid:false
-        }
+        };
         const endpoint = '/api/orders-items/';
         const thisComp = this;
         const csrfToken = cookie.load('csrftoken');
@@ -104,16 +103,17 @@ class Order extends React.Component {
             },
             credentials: 'include',
             body: JSON.stringify(data)
-        }
+        };
 
         fetch(endpoint, lookupOptions)
         .then(function(response){
             return response.json()
         }).then(function(responseData){
-            let new_data = thisComp.state.order_items.concat(responseData)
+            let new_data = thisComp.state.order_items.concat(responseData);
             thisComp.setState({
                 order_items: new_data
-            })
+            });
+            thisComp.loadOrder(order_id)
         }).catch(function(error){
             console.log('error', error)
         })
@@ -122,8 +122,8 @@ class Order extends React.Component {
     updateOrderItem(order_item, qty) {
         let data = order_item;
         data.qty = qty;
-        const endpoint = `/api/orders-items/detail/${order_item.id}/`
-        const csrfToken = cookie.load('csrftoken') 
+        const endpoint = `/api/orders-items/detail/${order_item.id}/`;
+        const csrfToken = cookie.load('csrftoken') ;
         const thisComp = this;
         let lookupOptions = {
             method: 'PUT',
@@ -133,114 +133,81 @@ class Order extends React.Component {
             },
             credentials: 'include',
             body: JSON.stringify(data)
-        }
+        };
 
         fetch(endpoint, lookupOptions)
         .then(function(response){
             return response.json()
         }).then(function(responseData){
-            let current_data = thisComp.state.order_items
-            const end_data = current_data.map((data_)=>{
-                console.log('loop', data_, responseData)
-                if (data_.id === responseData.id){
-                    return (
-                        Object.assign({}, responseData,{
-                            qty: qty
-                        })
-                    )
-                } else {
-                    return data
-                }
-            })
-            thisComp.setState({
-                order_items: end_data
-            })
+            thisComp.loadOrder(order_item.order_related);
+            thisComp.loadOrderItems(order_item.order_related)
         }).catch(function(error){
             console.log('error', error)
         })
     }
 
-    updateItem(type_){
-        const {id} = this.state;
-        const endpoint = `/api/orders-items/detail/${id}/`;
-        let data = this.state;
-        if(type_ === 'plus'){
-            data.qty = data.qty+1
-        } else {
-            data.qty = data.qty-1
-        }
-        const thisComp = this;
-        const csrfToken = cookie.load('csrftoken');
-        let lookupOptions = {
-            method: 'PUT',
+    updateOrderItemStatus = (order_item_id, qty) =>{
+        const endpoint = `/api/orders-items/detail/${order_item_id}/`;
+        let thisComp = this;
+        let data = {};
+        let lookupOptionsGET = {
+            method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
+                'Content-Type': 'application/json'
             },
             credentials: 'include',
-            body: JSON.stringify(data)
-        }
+        };
 
-        fetch(endpoint, lookupOptions)
-        .then(function(response){
-            return response.json()
-        }).then(function(responseData){
-            thisComp.props.updateOrderPage()
-        }).catch(function(error){
-            console.log(error)
-        })
-
-        if (data.qty === 0) {
-            let lookupOptionsDEL = {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfToken
-                },
-                credentials: 'include',
-            }
-
-            fetch(endpoint, lookupOptionsDEL)
-            .then(function(response){
+        fetch(endpoint, lookupOptionsGET)
+            .then(function (response) {
                 return response.json()
-            }).then(function(responseData){
-                thisComp.props.updateOrderPage()
-            }).catch(function(error){
-                console.log(error)
-            })
-        }
-        
-    }
+            }).then(function (responseData) {
+                data = responseData;
+                data.qty = qty;
+                const csrfToken = cookie.load('csrftoken');
+                if (qty === 0) {
+                    let lookupOptionsDEL = {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken
+                        },
+                        credentials: 'include',
+                    };
 
-    handlePlus(event) {
-        event.preventDefault()
-        let qty_ = this.state.qty + 1
-        console.log(this.state, qty_)
-        this.setState({
-            qty: qty_
-        })
-        console.log(this.state)
-        let type_ = 'plus'
-        this.updateItem(type_)
-    }
+                    fetch(endpoint, lookupOptionsDEL)
+                    .then(function(response){
+                        thisComp.loadOrderItems(thisComp.props.match.params.id);
+                        thisComp.loadOrder(thisComp.props.match.params.id);
+                        return response.json()
+                    })
+                } else {
+                    let lookupOptions = {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken
+                        },
+                        credentials: 'include',
+                        body: JSON.stringify(data)
+                    };
 
-    handleMinus(event){
-        event.preventDefault();
-        let qty_ = this.state.qty -1
-        this.setState({
-            qty: qty_
-        })
-        let type_ = 'minus'
-        this.updateItem(type_)
-    }
-
-    updateOrderItemStatus = () =>{
-
-    }
+                    fetch(endpoint, lookupOptions)
+                        .then(function(response){
+                            return response.json()
+                        }).then(function(responseData){
+                            thisComp.loadOrderItems(thisComp.props.match.params.id);
+                            thisComp.loadOrder(thisComp.props.match.params.id)
+                        }).catch(function(error){
+                            console.log(error)
+                        });
+                    }
+            });
+    };
 
     submitPaidButton = () =>{
         this.submitPaidOrder()
-    }
+    };
 
     submitPaidOrder(){
         let data = this.state.order;
@@ -261,37 +228,27 @@ class Order extends React.Component {
             },
             credentials: 'include',
             body: JSON.stringify(data)
-        }
+        };
 
         fetch(endpoint, lookupOptions)
         .then(function(response){
             return response.json()
         }).then(function(responseData){
-            let order_items_ = thisComp.state.order_items
-            new_order_items = order_items_.map((item)=>{
-                let new_item = item
-                new_item.is_paid = !item.is_paid
-                return new_item
-            })
             thisComp.setState({
                 order: responseData,
-                order_items: new_order_items
-            })
+            });
+            thisComp.loadOrderItems(responseData.id)
         }).catch(function(error){
             console.log(error)
         })
     }
 
-    renderRedirect = () => {
-      return <Redirect to='/target' />    
-    }
 
-    submitCloseTable(event){
-        event.preventDefault()
-        let data = {}
+    submitCloseTable(){
+        let data = {};
         const thisComp = this;
         const id = this.state.order.table_related;
-        const endpoint = `/api/table/detail/${id}/`
+        const endpoint = `/api/table/detail/${id}/`;
         const csrfToken = cookie.load('csrftoken'); 
         const lookupOptionsGET = {
             method: 'GET',
@@ -301,14 +258,15 @@ class Order extends React.Component {
             },
             credentials: 'include',
             
-        }
+        };
 
         fetch(endpoint, lookupOptionsGET)
         .then(function(response){
             return response.json()
         }).then(function(responseData){
-            data = responseData
-            data.is_using = false
+            data = responseData;
+            data.is_using = false;
+            data.is_paid = true;
             const lookupOptionsPUT = {
                 method: 'PUT',
                 headers:{
@@ -317,7 +275,7 @@ class Order extends React.Component {
                 },
                 credentials: 'include',
                 body: JSON.stringify(data)
-            }
+            };
 
 
             fetch(endpoint, lookupOptionsPUT)
@@ -334,14 +292,9 @@ class Order extends React.Component {
             })
     }
 
-    updateOrderPage(){
-        const {id} = this.props.match.params;
-        this.loadOrder(id);
-        this.loadOrderItems(id);
-    }
 
     render(){
-        console.log('render', this.state.order, this.state.products)
+        console.log('render', this.state.order, this.state.products);
         return (
             <div>
                <Navbar />
@@ -370,6 +323,8 @@ class Order extends React.Component {
                          order={this.state.order}  
                          updateOrderItemStatus={this.updateOrderItemStatus}
                          submitPaidButton={this.submitPaidButton}
+                         submitCloseTable={this.submitCloseTable}
+
                      />  
                     :
                     <p>No data</p>

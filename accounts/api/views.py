@@ -5,7 +5,7 @@ from django.contrib.auth import login
 
 from django.contrib.auth import get_user_model
 from .serializers import CreateUserSerializer, UserSerializer, LoginUserSerializer
-from knox.models import AuthToken
+
 
 User = get_user_model() 
 
