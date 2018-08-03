@@ -25,7 +25,7 @@ SECRET_KEY = 'z-14t(*3wwp1t-h$bci^oeacj6v4=6^=(oppfd=tx$rsb)yi$)'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*',]
 
 
 # Application definition
