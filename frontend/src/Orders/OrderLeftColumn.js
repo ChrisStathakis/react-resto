@@ -22,7 +22,7 @@ class OrderLeftColumn extends React.Component {
                 )
             });
         return (
-            <div className='column'>
+            <div className='eight wide column'>
                 <div className='ui raised segment'>
                     <h3 className='ui blue header'>Order Details</h3>
                     <div className="ui small statistics">

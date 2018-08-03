@@ -308,7 +308,7 @@ class Order extends React.Component {
                     </div>
                 </div>
                 <h3 className="ui center aligned header">Δεδομένα</h3>
-                <div className="ui two column doubling grid">
+                <div className="ui grid container">
                     {this.state.products !== null && this.state.order !== null ? 
                     <OrderLeftColumn 
                         products={this.state.products}

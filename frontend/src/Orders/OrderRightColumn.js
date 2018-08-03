@@ -30,7 +30,7 @@ class OrderRightColumn extends React.Component {
         const { order } = this.props;
         const { order_items} = this.props;
         return (
-            <div className='column'>
+            <div className='eight wide column'>
                <div className="ui raised segment">
                     <h3 className='ui blue header'>Actions</h3>
                     {order.is_paid === true ?
